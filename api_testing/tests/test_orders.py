@@ -1,6 +1,6 @@
 from data import Data
-from methods.courier_methods import CourierMethods
 from methods.order_methods import OrderMethods
+from methods.login_methods import LoginMethods
 import pytest
 import allure
 
@@ -24,9 +24,9 @@ class TestOrders:
 
     @allure.title('Принятие заказа')
     def test_accept_order(self):
-        courier_methods = CourierMethods()
+        login_methods = LoginMethods()
         order_methods = OrderMethods()
-        courier_id = courier_methods.get_courier_id()
+        courier_id = login_methods.get_courier_id(Data.LOGIN_DATA_FULL)
         track_id = order_methods.get_track_id()
         order_id = order_methods.get_order_id(track_id)
         status_code, text = order_methods.accept_order(order_id,courier_id)
@@ -35,9 +35,9 @@ class TestOrders:
 
     @allure.title('Получение списка заказов курьера')
     def test_get_orders_by_courier(self):
-        courier_methods = CourierMethods()
+        login_methods = LoginMethods()
         order_methods = OrderMethods()
-        _, text_courier = courier_methods.login_courier(Data.LOGIN_DATA_FULL)
+        _, text_courier = login_methods.login_courier(Data.LOGIN_DATA_FULL)
         courier_id = list(text_courier.values())[0]
         status_code, text = order_methods.get_orders_by_courier(courier_id)
         assert status_code == 200

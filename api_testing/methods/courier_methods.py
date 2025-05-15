@@ -1,7 +1,7 @@
 from url import TestUrl
 import requests
-from data import Data
 import allure
+from methods.login_methods import LoginMethods
 
 class CourierMethods:
 
@@ -10,19 +10,9 @@ class CourierMethods:
         response = requests.post(TestUrl.COURIER_URL, data=create_data)
         return  response.status_code, response.json()
 
-    @allure.step('Логин курьера')
-    def login_courier(self, login_data):
-        response = requests.post(TestUrl.LOGIN_URL, json=login_data)
-        return response.status_code, response.json()
-
     @allure.step('Удаление курьера')
     def delete_courier(self,login_data):
-        courier_id = self.get_courier_id()
+        login_methods = LoginMethods()
+        courier_id = login_methods.get_courier_id(login_data)
         response = requests.delete(f'{TestUrl.COURIER_URL}/{courier_id}')
         return response.status_code, response.text
-
-    @allure.step('Получение Id курьера')
-    def get_courier_id(self):
-        _, text_courier = CourierMethods.login_courier(self,Data.LOGIN_DATA_FULL)
-        courier_id = list(text_courier.values())[0]
-        return courier_id
